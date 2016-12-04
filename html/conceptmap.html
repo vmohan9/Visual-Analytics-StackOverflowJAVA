@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<head>
+	<meta charset="utf-8">
+	<meta name="name" content="Concept Map" />
+	<meta name="description" content="An abstract mapping for parameters. Works best if first tag is 'unique' among the tracklist, and the second tag applies to multiple tracks"/>
+	<meta name="mintags" content="2" />
+	<meta name="maxtags" content="2" />
+	<title>User and Associated Topics</title>
+
+<style>
+
+svg {
+    font: 14px sans-serif;
+}
+
+text {
+    pointer-events: none;
+}
+
+.inner_node rect {
+    pointer-events: all;
+}
+
+.inner_node rect.highlight {
+    stroke: #315B7E;
+    stroke-width: 2px;
+}
+
+.outer_node circle {
+    fill: #fff;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+    pointer-events: all;
+}
+
+.outer_node circle.highlight
+{
+    stroke: #315B7E;
+    stroke-width: 2px;
+}
+
+.link {
+    fill: none;
+}
+
+section {
+    width: 100%;
+    height: 200px;
+    margin: auto;
+    padding: 10px;
+}
+div#viz {
+    width: 60%;
+    height: 200px;
+    float: left;
+}
+div#one {
+    height: 700px;
+	float : right;
+}
+
+</style>	
+
+</head>
+<body>
+<div style="color:#0000FF; height: 50px;width: 100%;background-color: gray;" align="center">
+<embed src="heading.html">
+</div> 
+<section>
+<div id="viz"></div>
+<div  id = "one" ><br/><br/><br/>
+<img src="legend.jpg" style="float: top-right;" /><br/>
+<img src="legend2.jpg" style="float: top;" />
+</div> 
+</section>
+<script src="https://d3js.org/d3.v3.min.js"></script>
+<script>
+var data = [[22656,["arraylist", "generics", "Hashmap", "treemap", "treeset", "abstract", "array", "class", "exception", "for loop", "inheritance", "interface", "java methods", "multithread", "object", "overloading", "polymorphism", "static", "string", "while loop", "hadoop", "mysql", "oracle", "postgres", "sql", "hibernate", "ant", "junit", "maven", "mockito", "selenium", "android"]], [438154,["arraylist", "generics", "Hashmap", "hashset", "hashtable", "treeset", "abstract", "array", "class", "exception", "final", "for loop", "inheritance", "interface", "java methods", "multithread", "object", "overloading", "polymorphism", "static", "string", "while loop", "hadoop", "oracle", "sql", "hibernate", "spring", "ant", "junit", "maven", "mockito", "selenium", "android"]], [571407,["arraylist", "generics", "Hashmap", "priority-queue", "treemap", "treeset", "Vector", "abstract", "array", "class", "exception", "for loop", "inheritance", "interface", "java methods", "multithread", "object", "polymorphism", "static", "string", "while loop", "mysql", "oracle", "postgres", "sql", "hibernate", "spring", "struts", "ant", "junit", "maven", "mockito"]], [139985,["arraylist", "generics", "Hashmap", "hashset", "Vector", "abstract", "array", "class", "exception", "final", "for loop", "inheritance", "interface", "multithread", "object", "polymorphism", "static", "string", "while loop", "cassandra", "mongodb", "mysql", "oracle", "postgres", "sql", "hibernate", "spring", "struts", "junit", "maven", "android"]], [2970947,["arraylist", "generics", "Hashmap", "hashset", "hashtable", "treemap", "abstract", "array", "class", "encapsuation", "exception", "for loop", "inheritance", "interface", "object", "overloading", "polymorphism", "static", "while loop", "mysql", "oracle", "postgres", "sql", "jsf", "spring", "junit", "maven", "selenium", "android"]], [335858,["arraylist", "generics", "Hashmap", "hashset", "abstract", "array", "class", "encapsuation", "exception", "for loop", "inheritance", "interface", "multithread", "object", "polymorphism", "static", "string", "while loop", "mysql", "oracle", "hibernate", "junit", "mockito", "selenium"]], [57695,["arraylist", "generics", "Hashmap", "hashset", "treemap", "array", "class", "encapsuation", "exception", "final", "for loop", "inheritance", "interface", "multithread", "object", "overloading", "polymorphism", "static", "string", "while loop", "database", "mysql", "oracle", "junit", "maven", "mockito", "android"]], [1707091,["arraylist", "generics", "Hashmap", "hashtable", "priority-queue", "abstract", "array", "class", "exception", "final", "for loop", "inheritance", "interface", "java methods", "multithread", "object", "polymorphism", "static", "string", "while loop", "mysql", "oracle", "sql", "junit", "mockito", "android"]], [256196,["arraylist", "generics", "Hashmap", "hashset", "array", "class", "exception", "final", "for loop", "inheritance", "interface", "multithread", "object", "static", "string", "while loop", "mysql", "sql", "hibernate", "jsf", "spring", "junit", "maven", "mockito", "selenium"]], [1221571,["generics", "Hashmap", "hashset", "hashtable", "abstract", "class", "exception", "final", "for loop", "inheritance", "interface", "object", "polymorphism", "static", "while loop", "hadoop", "mysql", "oracle", "sql", "hibernate", "spring", "mockito", "selenium", "android"]], [260990,["generics", "Hashmap", "hashset", "treemap", "abstract", "array", "class", "exception", "inheritance", "interface", "multithread", "object", "polymorphism", "static", "string", "mysql", "sql", "hibernate", "spring", "maven", "selenium", "android"]], [478399,["generics", "Hashmap", "array", "class", "exception", "for loop", "inheritance", "interface", "object", "polymorphism", "string", "while loop", "mysql", "oracle", "sql", "hibernate", "spring", "ant", "junit", "maven", "mockito", "android"]], [1103872,["generics", "treemap", "array", "class", "exception", "for loop", "inheritance", "interface", "java methods", "multithread", "overloading", "polymorphism", "static", "string", "while loop", "mysql", "postgres", "sql", "hibernate", "spring", "maven", "selenium", "android"]], [207421,["generics", "Hashmap", "hashset", "array", "class", "exception", "final", "for loop", "inheritance", "interface", "multithread", "object", "polymorphism", "static", "string", "mysql", "oracle", "sql", "hibernate", "spring", "maven", "android"]], [992484,["generics", "Vector", "abstract", "array", "class", "exception", "inheritance", "interface", "multithread", "object", "overloading", "polymorphism", "string", "while loop", "mysql", "oracle", "sql", "hibernate", "ant", "maven"]], [871026,["generics", "Hashmap", "array", "class", "exception", "inheritance", "interface", "multithread", "overloading", "polymorphism", "static", "string", "while loop", "mysql", "postgres", "sql", "hibernate", "spring", "junit", "maven"]], [522444,["generics", "Hashmap", "hashset", "array", "class", "exception", "for loop", "inheritance", "interface", "java methods", "multithread", "object", "polymorphism", "static", "string", "while loop", "mysql", "oracle", "android"]], [1927832,["generics", "Hashmap", "hashset", "abstract", "exception", "final", "for loop", "inheritance", "interface", "java methods", "object", "polymorphism", "static", "mysql", "oracle", "hibernate", "junit", "maven"]], [1065197,["hashset", "exception", "final", "for loop", "inheritance", "interface", "object", "overloading", "polymorphism", "static", "mysql", "postgres", "sql", "hibernate", "jsf", "spring", "android"]], [14955,["generics", "Hashmap", "treemap", "array", "class", "inheritance", "multithread", "polymorphism", "string", "while loop", "mysql", "oracle", "sql", "hibernate", "spring", "maven"]], [1679863,["abstract", "array", "class", "final", "inheritance", "interface", "object", "polymorphism", "static", "string", "hibernate", "spring", "junit", "maven", "mockito"]], [829571,["generics", "Hashmap", "treemap", "array", "exception", "inheritance", "interface", "multithread", "polymorphism", "string", "while loop", "postgres", "junit", "maven", "mockito"]], [157247,["generics", "array", "class", "exception", "final", "for loop", "inheritance", "interface", "multithread", "object", "polymorphism", "static", "string", "sql"]], [37213,["exception", "for loop", "inheritance", "interface", "multithread", "polymorphism", "string", "mysql", "oracle", "postgres", "sql", "hibernate", "spring", "maven"]], [34088,["array", "class", "final", "interface", "multithread", "static", "string", "hadoop", "mysql", "hibernate", "spring", "junit", "maven", "mockito"]], [1831293,["generics", "Hashmap", "hashset", "priority-queue", "treemap", "exception", "polymorphism", "mysql", "sql", "hibernate", "spring", "junit", "maven"]], [592139,["Hashmap", "array", "class", "inheritance", "interface", "multithread", "object", "string", "spring", "ant", "junit", "maven", "selenium"]], [276052,["generics", "hashset", "class", "final", "for loop", "inheritance", "polymorphism", "static", "string", "while loop", "maven", "android"]], [12960,["Hashmap", "array", "class", "exception", "final", "for loop", "inheritance", "java methods", "multithread", "string", "junit", "mockito"]], [131872,["Hashmap", "abstract", "array", "class", "exception", "interface", "multithread", "string", "mysql", "sql", "hibernate"]]];
+
+// transform the data into a useful representation
+// 1 is inner, 2, is outer
+
+// need: inner, outer, links
+//
+// inner: 
+// links: { inner: outer: }
+
+
+var outer = d3.map();
+var inner = [];
+var links = [];
+
+var outerId = [0];
+
+data.forEach(function(d){
+	
+	if (d == null)
+		return;
+	
+	i = { id: 'i' + inner.length, name: d[0], related_links: [] };
+	i.related_nodes = [i.id];
+	inner.push(i);
+	
+	if (!Array.isArray(d[1]))
+		d[1] = [d[1]];
+	
+	d[1].forEach(function(d1){
+		
+		o = outer.get(d1);
+		
+		if (o == null)
+		{
+			o = { name: d1,	id: 'o' + outerId[0], related_links: [] };
+			o.related_nodes = [o.id];
+			outerId[0] = outerId[0] + 1;	
+			
+			outer.set(d1, o);
+		}
+		
+		// create the links
+		l = { id: 'l-' + i.id + '-' + o.id, inner: i, outer: o }
+		links.push(l);
+		
+		// and the relationships
+		i.related_nodes.push(o.id);
+		i.related_links.push(l.id);
+		o.related_nodes.push(i.id);
+		o.related_links.push(l.id);
+	});
+});
+
+data = {
+	inner: inner,
+	outer: outer.values(),
+	links: links
+}
+
+// sort the data -- TODO: have multiple sort options
+outer = data.outer;
+data.outer = Array(outer.length);
+
+
+var i1 = 0;
+var i2 = outer.length - 1;
+
+for (var i = 0; i < data.outer.length; ++i)
+{
+	if (i % 2 == 1)
+		data.outer[i2--] = outer[i];
+	else
+		data.outer[i1++] = outer[i];
+}
+
+console.log(data.outer.reduce(function(a,b) { return a + b.related_links.length; }, 0) / data.outer.length);
+
+
+// from d3 colorbrewer: 
+// This product includes color specifications and designs developed by Cynthia Brewer (http://colorbrewer.org/).
+var colors = ["#a50026","#d73027","#f46d43","#fdae61","#fee090","#ffffbf","#e0f3f8","#abd9e9","#74add1","#4575b4","#313695"];
+var color = d3.scale.linear()
+    .domain([60, 220])
+    .range([colors.length-1, 0])
+    .clamp(true);
+
+var diameter = 700;
+var rect_width = 60;
+var rect_height = 14;
+
+var link_width = "1px"; 
+var co = '#009933';
+
+var il = data.inner.length;
+var ol = data.outer.length;
+
+var inner_y = d3.scale.linear()
+    .domain([0, il])
+    .range([-(il * rect_height)/2, (il * rect_height)/2]);
+
+mid = (data.outer.length/2.0)
+var outer_x = d3.scale.linear()
+    .domain([0, mid, mid, data.outer.length])
+    .range([15, 170, 190 ,355]);
+
+var outer_y = d3.scale.linear()
+    .domain([0, data.outer.length])
+    .range([0, diameter / 2 - 120]);
+
+
+// setup positioning
+data.outer = data.outer.map(function(d, i) { 
+    d.x = outer_x(i);
+    d.y = diameter/3;
+    return d;
+});
+
+data.inner = data.inner.map(function(d, i) { 
+    d.x = -(rect_width / 2);
+    d.y = inner_y(i);
+    return d;
+});
+
+
+function get_color(name)
+{
+	console.log(name);
+    var c = Math.round(color(name));
+    if (isNaN(c))
+        return '#fffff';	// fallback color
+    
+    return colors[c];
+}
+
+// Can't just use d3.svg.diagonal because one edge is in normal space, the
+// other edge is in radial space. Since we can't just ask d3 to do projection
+// of a single point, do it ourselves the same way d3 would do it.  
+
+
+function projectX(x)
+{
+    return ((x - 90) / 180 * Math.PI) - (Math.PI/2);
+}
+
+var diagonal = d3.svg.diagonal()
+    .source(function(d) { return {"x": d.outer.y * Math.cos(projectX(d.outer.x)), 
+                                  "y": -d.outer.y * Math.sin(projectX(d.outer.x))}; })            
+    .target(function(d) { return {"x": d.inner.y + rect_height/2,
+                                  "y": d.outer.x > 180 ? d.inner.x : d.inner.x + rect_width}; })
+    .projection(function(d) { return [d.y, d.x]; });
+
+
+var svg = d3.select("#viz").append("svg")
+    .attr("width", diameter)
+    .attr("height", diameter)
+  .append("g")
+    .attr("transform", "translate(" + diameter / 2 + "," + diameter / 2 + ")");
+    
+
+// links
+var link = svg.append('g').attr('class', 'links').selectAll(".link")
+    .data(data.links)
+  	.enter().append('path')
+    .attr('class', 'link')
+    .attr('id', function(d) { return d.id })
+    .attr("d", diagonal)
+    .attr('stroke', function(d) {return '#39a3c6';})//return '#3366ff'; })
+    .attr('stroke-width', link_width);
+
+// outer nodes
+
+var onode = svg.append('g').selectAll(".outer_node")
+    .data(data.outer)
+  .enter().append("g")
+    .attr("class", "outer_node")
+    .attr("transform", function(d) { return "rotate(" + (d.x - 90) + ")translate(" + d.y + ")"; })
+    .on("mouseover", mouseover)
+    .on("mouseout", mouseout);
+  
+onode.append("circle")
+    .attr('id', function(d) { return d.id })
+    .attr("r", 4.5);
+  
+onode.append("circle")
+    .attr('r', 20)
+    .attr('visibility', 'hidden');
+  
+onode.append("text")
+	.attr('id', function(d) { return d.id + '-txt'; })
+    .attr("dy", ".31em")
+    .attr("text-anchor", function(d) { return d.x < 180 ? "start" : "end"; })
+    .attr("transform", function(d) { return d.x < 180 ? "translate(8)" : "rotate(180)translate(-8)"; })
+    .text(function(d) { return d.name; })
+    .style("fill",function(d){if((d.name).localeCompare('Hashmap')==0) return 'green';
+    if((d.name).localeCompare('arraylist')==0) return 'green';
+    if((d.name).localeCompare('Vector')==0) return 'green';
+    if((d.name).localeCompare('treeset')==0) return 'green';
+    if((d.name).localeCompare('treemap')==0) return 'green';
+    if((d.name).localeCompare('generics')==0) return 'green';
+    if((d.name).localeCompare('hashset')==0) return 'green';
+    if((d.name).localeCompare('hashtable')==0) return 'green';
+    if((d.name).localeCompare('priority-queue')==0) return 'green';
+    if((d.name).localeCompare('postgres')==0) return 'Red';
+    if((d.name).localeCompare('sql')==0) return 'Red';
+    if((d.name).localeCompare('oracle')==0) return 'Red';
+    if((d.name).localeCompare('hadoop')==0) return 'Red';
+    if((d.name).localeCompare('mysql')==0) return 'Red';
+    if((d.name).localeCompare('database')==0) return 'Red';
+    if((d.name).localeCompare('mongodb')==0) return 'Red';
+    if((d.name).localeCompare('cassandra')==0) return 'Red';
+    if((d.name).localeCompare('ant')==0) return 'orange';
+    if((d.name).localeCompare('struts')==0) return 'orange';
+    if((d.name).localeCompare('spring')==0) return 'orange';
+    if((d.name).localeCompare('maven')==0) return 'orange';
+    if((d.name).localeCompare('android')==0) return 'orange';
+    if((d.name).localeCompare('ant')==0) return 'orange';
+    if((d.name).localeCompare('hibernate')==0) return 'orange';
+    if((d.name).localeCompare('jsf')==0) return 'orange';
+    if((d.name).localeCompare('static')==0) return 'purple';
+    if((d.name).localeCompare('while loop')==0) return 'purple';
+    if((d.name).localeCompare('polymorphism')==0) return 'purple';
+    if((d.name).localeCompare('exception')==0) return 'purple';
+    if((d.name).localeCompare('encapsuation')==0) return 'purple';
+    if((d.name).localeCompare('inheritance')==0) return 'purple';
+    if((d.name).localeCompare('string')==0) return 'purple';
+    if((d.name).localeCompare('loop')==0) return 'purple';
+    if((d.name).localeCompare('java methods')==0) return 'purple';
+    if((d.name).localeCompare('array')==0) return 'purple';
+    if((d.name).localeCompare('object')==0) return 'purple';
+    if((d.name).localeCompare('abstract')==0) return 'purple';
+    if((d.name).localeCompare('for loop')==0) return 'purple';
+    if((d.name).localeCompare('interface')==0) return 'purple';
+    if((d.name).localeCompare('multithread')==0) return 'purple';
+    if((d.name).localeCompare('overloading')==0) return 'purple';
+    if((d.name).localeCompare('class')==0) return 'purple';
+    if((d.name).localeCompare('object')==0) return 'purple';
+    if((d.name).localeCompare('final')==0) return 'purple';
+    if((d.name).localeCompare('selenium')==0) return 'maroon';
+    if((d.name).localeCompare('junit')==0) return 'maroon';
+    if((d.name).localeCompare('mockito')==0) return 'maroon';
+
+
+});
+  
+// inner nodes
+  
+var inode = svg.append('g').selectAll(".inner_node")
+    .data(data.inner)
+  .enter().append("g")
+    .attr("class", "inner_node")
+    .attr("transform", function(d, i) { return "translate(" + d.x + "," + d.y + ")"})
+    .on("mouseover", mouseover)
+    .on("mouseout", mouseout);
+  
+inode.append('rect')
+    .attr('width', rect_width)
+    .attr('height', rect_height)
+    .attr('id', function(d) { return d.id; })
+    .attr('fill', function(d) { if(d.name==22656||d.name==438154||d.name==571407) return '#F47900';else if(d.name==139985||d.name==2970947||d.name==335858)return '#F9830E';else if(d.name==57695||d.name==1707091||d.name==256196)return '#FC8B1B';else if(d.name==1221571||d.name==260990||d.name==478399)return '#FC9128';else if(d.name==207421||d.name==1103872||d.name==992484)return '#FC9735';else if(d.name==871026||d.name==522444||d.name==1927832)return '#FC9F44';else if(d.name==1065197||d.name==14955||d.name==1679863)return '#FCA753';else if(d.name==829571||d.name==157247||d.name==37213)return '#FCAD57';else if(d.name==34088||d.name==1831293||d.name==592139)return '#FCB36C';else return '#FCC085';});
+  
+inode.append("text")
+	.attr('id', function(d) { return d.id + '-txt'; })
+    .attr('text-anchor', 'middle')
+    .attr("transform", "translate(" + rect_width/2 + ", " + rect_height * .75 + ")")
+    .text(function(d) { return d.name; });
+
+
+// need to specify x/y/etc
+
+d3.select(self.frameElement).style("height", diameter - 150 + "px");
+
+function mouseover(d)
+{
+	// bring to front
+	d3.selectAll('.links .link').sort(function(a, b){ return d.related_links.indexOf(a.id); });	
+	
+    for (var i = 0; i < d.related_nodes.length; i++)
+    {
+        d3.select('#' + d.related_nodes[i]).classed('highlight', true);
+        d3.select('#' + d.related_nodes[i] + '-txt').attr("font-weight", 'bold');
+        
+    }
+    
+    for (var i = 0; i < d.related_links.length; i++){
+        d3.select('#' + d.related_links[i]).attr('stroke-width', '2px');
+        d3.select('#' + d.related_links[i]).attr('stroke','black');
+    
+    }
+}
+
+function mouseout(d)
+{   	
+    for (var i = 0; i < d.related_nodes.length; i++)
+    {
+        d3.select('#' + d.related_nodes[i]).classed('highlight', false);
+        d3.select('#' + d.related_nodes[i] + '-txt').attr("font-weight", 'normal');
+    }
+    
+    for (var i = 0; i < d.related_links.length; i++){
+        d3.select('#' + d.related_links[i]).attr('stroke-width', link_width);
+    	d3.select('#' + d.related_links[i]).attr('stroke', '#39a3c6');
+     }
+}
+
+</script>

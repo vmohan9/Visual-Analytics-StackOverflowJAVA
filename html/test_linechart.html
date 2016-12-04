@@ -1,0 +1,666 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8"/>
+  <title>dragit example with a scatterplot</title>
+<style>
+
+body {
+  font: 10px sans-serif;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.dot {
+  stroke: #000;
+}
+
+</style>
+  <link href="../src/dragit.css" rel="stylesheet"/>
+  <script src="../lib/d3.v3.js"></script>
+  <script src="../src/dragit.js"></script>
+</head>
+<body>
+<div style="color:#0000FF; height: 50px;width: 100%;background-color: gray;" align="center">
+<embed src="heading.html">
+</div> 
+<div id="bkg" style="width: 100%; overflow: hidden;">
+  <form style="font-size:16px;"name="myform">
+<input style="width: 30px;" type ="radio" name ="a" value= "Collections" checked onchange="myfunction()">Collections
+<input style="width: 30px;" type ="radio" name ="a" value= "CoreJAVA" onchange="myfunction()">CoreJAVA
+<input style="width: 30px;" type ="radio" name ="a" value= "Databases" onchange="myfunction()">Databases
+<input style="width: 30px;" type ="radio" name ="a" value= "Frameworks" onchange="myfunction()">Frameworks
+<input style="width: 30px;" type ="radio" name ="a" value= "Testing" onchange="myfunction()">Testing
+</form>
+</div>
+
+<div id="viz"></div>
+<p style="clear:both"></p>
+<div id="slider"></div>
+<label><input type="checkbox" name="mode" value="trajectory" onclick="dragit.trajectory.toggleAll('selected');" checked> Show complete trajectory</label>
+<script>
+
+// Original scatterplot from http://bl.ocks.org/mbostock/3887118
+// Data source http://econ.worldbank.org/WBSITE/EXTERNAL/EXTDEC/EXTRESEARCH/0,,contentMDK:20699068~pagePK:64214825~piPK:64214943~theSitePK:469382,00.html
+// Data source http://catalog.ihsn.org/index.php/catalog/1056/data_dictionary
+var gPoints,x,y,margin;
+var flag = 0;
+data = [
+  {"name": "ArrayList",
+  "years": [
+    {"year": 1388534628, "value": 0},
+    {"year": 1391858647.6, "value": 0},
+    {"year": 1395182667.2, "value": 79},
+    {"year": 1398506686.8, "value": 109},
+    {"year": 1401830706.4, "value": 136},
+    {"year": 1405154726, "value": 147},
+    {"year": 1408478745.6, "value": 148},
+    {"year": 1411802765.2, "value": 70},
+    {"year": 1415126784.8, "value": 181},
+    {"year": 1418450804.4, "value": 33}
+     ]},
+  {"name": "Generics",
+  "years": [
+    {"year": 1388534628, "value": 0},
+    {"year": 1391858647.6, "value": 0},
+    {"year": 1395182667.2, "value": 77},
+    {"year": 1398506686.8, "value": 75},
+    {"year": 1401830706.4, "value": 119},
+    {"year": 1405154726, "value": 113},
+    {"year": 1408478745.6, "value": 110},
+    {"year": 1411802765.2, "value": 74},
+    {"year": 1415126784.8, "value": 109},
+    {"year": 1418450804.4, "value": 26}
+     ]
+  },
+  {"name": "Hashmap",
+  "years": [
+    {"year": 1388534628, "value": 0},
+    {"year": 1391858647.6, "value": 0},
+    {"year": 1395182667.2, "value": 21},
+    {"year": 1398506686.8, "value": 41},
+    {"year": 1401830706.4, "value": 35},
+    {"year": 1405154726, "value": 11},
+    {"year": 1408478745.6, "value": 22},
+    {"year": 1411802765.2, "value": 27},
+    {"year": 1415126784.8, "value": 69},
+    {"year": 1418450804.4, "value": 10}
+     ]
+  },
+  {"name": "Hashset",
+  "years": [
+    {"year": 1388534628, "value": 5},
+    {"year": 1391858647.6, "value": 8},
+    {"year": 1395182667.2, "value": 4},
+    {"year": 1398506686.8, "value": 4},
+    {"year": 1401830706.4, "value": 5},
+    {"year": 1405154726, "value": 7},
+    {"year": 1408478745.6, "value": 6},
+    {"year": 1411802765.2, "value": 4},
+    {"year": 1415126784.8, "value": 13},
+    {"year": 1418450804.4, "value": 1}
+     ]
+  },
+  {"name": "Vector",
+  "years": [
+    {"year": 1388534628, "value": 0},
+    {"year": 1391858647.6, "value": 0},
+    {"year": 1395182667.2, "value": 0},
+    {"year": 1398506686.8, "value": 0},
+    {"year": 1401830706.4, "value": 8},
+    {"year": 1405154726, "value": 5},
+    {"year": 1408478745.6, "value": 9},
+    {"year": 1411802765.2, "value": 0},
+    {"year": 1415126784.8, "value": 0},
+    {"year": 1418450804.4, "value": 0}
+     ]
+  }
+  
+  ]  
+  data1 = data;
+  data2 = [
+  
+  {"name": "Array",
+  "years": [
+    {"year": 1388534628, "value": 0},
+    {"year": 1391858647.6, "value": 0},
+    {"year": 1395182667.2, "value": 982},
+    {"year": 1398506686.8, "value": 809},
+    {"year": 1401830706.4, "value": 979},
+    {"year": 1405154726, "value": 407},
+    {"year": 1408478745.6, "value": 1097},
+    {"year": 1411802765.2, "value": 4},
+    {"year": 1415126784.8, "value": 7},
+    {"year": 1418450804.4, "value": 1}
+     ]
+  },
+  {"name": "Class",
+  "years": [
+    {"year": 1388534628, "value": 0},
+    {"year": 1391858647.6, "value": 0},
+    {"year": 1395182667.2, "value": 672},
+    {"year": 1398506686.8, "value": 551},
+    {"year": 1401830706.4, "value": 661},
+    {"year": 1405154726, "value": 741},
+    {"year": 1408478745.6, "value": 791},
+    {"year": 1411802765.2, "value": 16},
+    {"year": 1415126784.8, "value": 8},
+    {"year": 1418450804.4, "value": 5}
+     ]
+  },
+  {"name": "Encapsulation",
+  "years": [
+    {"year": 1388534628, "value": 5},
+    {"year": 1391858647.6, "value": 52},
+    {"year": 1395182667.2, "value": 132},
+    {"year": 1398506686.8, "value": 36},
+    {"year": 1401830706.4, "value": 14},
+    {"year": 1405154726, "value": 50},
+    {"year": 1408478745.6, "value": 171},
+    {"year": 1411802765.2, "value": 31},
+    {"year": 1415126784.8, "value": 12},
+    {"year": 1418450804.4, "value": 25}
+     ]
+  },
+  {"name": "Final",
+  "years": [
+    {"year": 1388534628, "value": 15},
+    {"year": 1391858647.6, "value": 30},
+    {"year": 1395182667.2, "value": 16},
+    {"year": 1398506686.8, "value": 40},
+    {"year": 1401830706.4, "value": 39},
+    {"year": 1405154726, "value": 11},
+    {"year": 1408478745.6, "value": 5},
+    {"year": 1411802765.2, "value": 32},
+    {"year": 1415126784.8, "value": 12},
+    {"year": 1418450804.4, "value": 20}
+     ]
+  },
+  {"name": "Inheritance",
+  "years": [
+    {"year": 1388534628, "value": 223},
+    {"year": 1391858647.6, "value": 515},
+    {"year": 1395182667.2, "value": 291},
+    {"year": 1398506686.8, "value": 312},
+    {"year": 1401830706.4, "value": 63},
+    {"year": 1405154726, "value": 25},
+    {"year": 1408478745.6, "value": 112},
+    {"year": 1411802765.2, "value": 76},
+    {"year": 1415126784.8, "value":119},
+    {"year": 1418450804.4, "value": 34}
+     ]
+  },
+  {"name": "Interface",
+  "years": [
+    {"year": 1388534628, "value": 62},
+    {"year": 1391858647.6, "value": 147},
+    {"year": 1395182667.2, "value": 204},
+    {"year": 1398506686.8, "value": 68},
+    {"year": 1401830706.4, "value": 23},
+    {"year": 1405154726, "value": 36},
+    {"year": 1408478745.6, "value": 29},
+    {"year": 1411802765.2, "value": 40},
+    {"year": 1415126784.8, "value": 34},
+    {"year": 1418450804.4, "value": 27}
+     ]
+  },
+  {"name": "Multithreading",
+  "years": [
+    {"year": 1388534628, "value": 142},
+    {"year": 1391858647.6, "value": 98},
+    {"year": 1395182667.2, "value": 347},
+    {"year": 1398506686.8, "value": 251},
+    {"year": 1401830706.4, "value": 171},
+    {"year": 1405154726, "value": 228},
+    {"year": 1408478745.6, "value": 38},
+    {"year": 1411802765.2, "value": 465},
+    {"year": 1415126784.8, "value": 315},
+    {"year": 1418450804.4, "value": 27}
+     ]
+  },
+  {"name": "Object",
+  "years": [
+    {"year": 1388534628, "value": 675},
+    {"year": 1391858647.6, "value": 256},
+    {"year": 1395182667.2, "value": 998},
+    {"year": 1398506686.8, "value": 529},
+    {"year": 1401830706.4, "value": 50},
+    {"year": 1405154726, "value": 279},
+    {"year": 1408478745.6, "value": 452},
+    {"year": 1411802765.2, "value": 339},
+    {"year": 1415126784.8, "value": 291},
+    {"year": 1418450804.4, "value": 104}
+     ]
+  },
+  {"name": "Polymorphism",
+  "years": [
+    {"year": 1388534628, "value": 50},
+    {"year": 1391858647.6, "value": 121},
+    {"year": 1395182667.2, "value": 255},
+    {"year": 1398506686.8, "value": 43},
+    {"year": 1401830706.4, "value": 56},
+    {"year": 1405154726, "value": 123},
+    {"year": 1408478745.6, "value": 0},
+    {"year": 1411802765.2, "value": 37},
+    {"year": 1415126784.8, "value": 79},
+    {"year": 1418450804.4, "value": 24}
+     ]
+  },
+  {"name": "static",
+  "years": [
+    {"year": 1388534628, "value": 323},
+    {"year": 1391858647.6, "value": 178},
+    {"year": 1395182667.2, "value": 521},
+    {"year": 1398506686.8, "value": 152},
+    {"year": 1401830706.4, "value": 243},
+    {"year": 1405154726, "value": 39},
+    {"year": 1408478745.6, "value": 449},
+    {"year": 1411802765.2, "value": 151},
+    {"year": 1415126784.8, "value": 98},
+    {"year": 1418450804.4, "value": 232}
+     ]
+  }
+  ]  
+
+  data3 = [
+  {"name": "Cassandra",
+  "years": [
+    {"year": 1388534628, "value": 212},
+    {"year": 1391858647.6, "value": 342},
+    {"year": 1395182667.2, "value": 579},
+    {"year": 1398506686.8, "value": 109},
+    {"year": 1401830706.4, "value": 936},
+    {"year": 1405154726, "value": 347},
+    {"year": 1408478745.6, "value": 148},
+    {"year": 1411802765.2, "value": 320},
+    {"year": 1415126784.8, "value": 981},
+    {"year": 1418450804.4, "value": 233}
+     ]},
+  {"name": "Hadoop",
+  "years": [
+    {"year": 1388534628, "value": 563},
+    {"year": 1391858647.6, "value": 737},
+    {"year": 1395182667.2, "value": 277},
+    {"year": 1398506686.8, "value": 475},
+    {"year": 1401830706.4, "value": 119},
+    {"year": 1405154726, "value": 413},
+    {"year": 1408478745.6, "value": 210},
+    {"year": 1411802765.2, "value": 874},
+    {"year": 1415126784.8, "value": 909},
+    {"year": 1418450804.4, "value": 426}
+     ]
+  },
+  {"name": "Mongodb",
+  "years": [
+    {"year": 1388534628, "value": 1504},
+    {"year": 1391858647.6, "value": 569},
+    {"year": 1395182667.2, "value": 990},
+    {"year": 1398506686.8, "value": 475},
+    {"year": 1401830706.4, "value": 329},
+    {"year": 1405154726, "value": 111},
+    {"year": 1408478745.6, "value": 649},
+    {"year": 1411802765.2, "value": 532},
+    {"year": 1415126784.8, "value": 999},
+    {"year": 1418450804.4, "value": 824}
+     ]
+  },
+   {"name": "Mysql",
+  "years": [
+    {"year": 1388534628, "value": 1351},
+    {"year": 1391858647.6, "value": 1145},
+    {"year": 1395182667.2, "value": 590},
+    {"year": 1398506686.8, "value": 535},
+    {"year": 1401830706.4, "value": 719},
+    {"year": 1405154726, "value": 467},
+    {"year": 1408478745.6, "value": 378},
+    {"year": 1411802765.2, "value": 277},
+    {"year": 1415126784.8, "value": 623},
+    {"year": 1418450804.4, "value": 524}
+     ]
+  },
+  {"name": "Postgres",
+  "years": [
+    {"year": 1388534628, "value": 845},
+    {"year": 1391858647.6, "value": 1006},
+    {"year": 1395182667.2, "value": 221},
+    {"year": 1398506686.8, "value": 479},
+    {"year": 1401830706.4, "value": 139},
+    {"year": 1405154726, "value": 281},
+    {"year": 1408478745.6, "value": 922},
+    {"year": 1411802765.2, "value": 827},
+    {"year": 1415126784.8, "value": 269},
+    {"year": 1418450804.4, "value": 1204}
+     ]
+  }
+  ] 
+
+data4 = [
+  {"name": "Hibernate",
+  "years": [
+    {"year": 1388534628, "value": 1672},
+    {"year": 1391858647.6, "value": 134},
+    {"year": 1395182667.2, "value": 451},
+    {"year": 1398506686.8, "value": 222},
+    {"year": 1401830706.4, "value": 294},
+    {"year": 1405154726, "value": 306},
+    {"year": 1408478745.6, "value": 1098},
+    {"year": 1411802765.2, "value": 62},
+    {"year": 1415126784.8, "value": 123},
+    {"year": 1418450804.4, "value": 22}
+     ]},
+  {"name": "JSF",
+  "years": [
+    {"year": 1388534628, "value": 0},
+    {"year": 1391858647.6, "value": 0},
+    {"year": 1395182667.2, "value": 0},
+    {"year": 1398506686.8, "value": 0},
+    {"year": 1401830706.4, "value": 23},
+    {"year": 1405154726, "value": 23},
+    {"year": 1408478745.6, "value": 8},
+    {"year": 1411802765.2, "value": 0},
+    {"year": 1415126784.8, "value": 1},
+    {"year": 1418450804.4, "value": 0}
+     ]
+  },
+  {"name": "Spring",
+  "years": [
+    {"year": 1388534628, "value": 0},
+    {"year": 1391858647.6, "value": 0},
+    {"year": 1395182667.2, "value": 335},
+    {"year": 1398506686.8, "value": 1786},
+    {"year": 1401830706.4, "value": 303},
+    {"year": 1405154726, "value": 173},
+    {"year": 1408478745.6, "value": 71},
+    {"year": 1411802765.2, "value": 161},
+    {"year": 1415126784.8, "value": 473},
+    {"year": 1418450804.4, "value": 10}
+     ]
+  },
+   {"name": "Struts",
+  "years": [
+    {"year": 1388534628, "value": 0},
+    {"year": 1391858647.6, "value": 215},
+    {"year": 1395182667.2, "value": 154},
+    {"year": 1398506686.8, "value": 554},
+    {"year": 1401830706.4, "value": 236},
+    {"year": 1405154726, "value": 216},
+    {"year": 1408478745.6, "value": 211},
+    {"year": 1411802765.2, "value": 332},
+    {"year": 1415126784.8, "value": 50},
+    {"year": 1418450804.4, "value": 15}
+     ]
+  }
+  ]
+  
+  
+  data5 = [
+  {"name": "Ant",
+  "years": [
+    {"year": 1388534628, "value": 672},
+    {"year": 1391858647.6, "value": 134},
+    {"year": 1395182667.2, "value": 251},
+    {"year": 1398506686.8, "value": 322},
+    {"year": 1401830706.4, "value": 294},
+    {"year": 1405154726, "value": 106},
+    {"year": 1408478745.6, "value": 98},
+    {"year": 1411802765.2, "value": 62},
+    {"year": 1415126784.8, "value": 23},
+    {"year": 1418450804.4, "value": 122}
+     ]},
+  {"name": "Junit",
+  "years": [
+    {"year": 1388534628, "value": 134},
+    {"year": 1391858647.6, "value": 578},
+    {"year": 1395182667.2, "value": 231},
+    {"year": 1398506686.8, "value": 341},
+    {"year": 1401830706.4, "value": 734},
+    {"year": 1405154726, "value": 223},
+    {"year": 1408478745.6, "value": 108},
+    {"year": 1411802765.2, "value": 240},
+    {"year": 1415126784.8, "value": 351},
+    {"year": 1418450804.4, "value": 109}
+     ]
+  },
+  {"name": "Maven",
+  "years": [
+    {"year": 1388534628, "value": 223},
+    {"year": 1391858647.6, "value": 158},
+    {"year": 1395182667.2, "value": 523},
+    {"year": 1398506686.8, "value": 86},
+    {"year": 1401830706.4, "value": 39},
+    {"year": 1405154726, "value": 73},
+    {"year": 1408478745.6, "value": 671},
+    {"year": 1411802765.2, "value": 361},
+    {"year": 1415126784.8, "value": 273},
+    {"year": 1418450804.4, "value": 140}
+     ]
+  },
+   {"name": "Mockito",
+  "years": [
+    {"year": 1388534628, "value": 0},
+    {"year": 1391858647.6, "value": 25},
+    {"year": 1395182667.2, "value": 54},
+    {"year": 1398506686.8, "value": 39},
+    {"year": 1401830706.4, "value": 136},
+    {"year": 1405154726, "value": 16},
+    {"year": 1408478745.6, "value": 52},
+    {"year": 1411802765.2, "value": 32},
+    {"year": 1415126784.8, "value": 5},
+    {"year": 1418450804.4, "value": 15}
+     ]
+  },
+  {"name": "Selenium",
+  "years": [
+    {"year": 1388534628, "value": 310},
+    {"year": 1391858647.6, "value": 225},
+    {"year": 1395182667.2, "value": 150},
+    {"year": 1398506686.8, "value": 139},
+    {"year": 1401830706.4, "value": 36},
+    {"year": 1405154726, "value": 231},
+    {"year": 1408478745.6, "value": 352},
+    {"year": 1411802765.2, "value": 132},
+    {"year": 1415126784.8, "value": 115},
+    {"year": 1418450804.4, "value": 251}
+     ]
+  }
+  ]
+
+  
+
+function myfunction(){
+
+  var x=document.getElementById('body');
+    var y=document.myform.a;
+        if (y.value == 'Collections') {
+           data = data1;
+        }
+        else if(y.value == 'CoreJAVA'){
+          data = data2;
+        }
+        else if(y.value == 'Databases')
+          data = data3;
+		else if(y.value == 'Frameworks')
+		data = data4;
+		else
+		data = data5;
+  //d3.select("#slider").remove();
+
+  draw();
+}
+function draw(){
+d3.select("#viz").select("svg").remove();
+margin = {top: 20, right: 50, bottom: 30, left: 40},
+    width = 960 - margin.left - margin.right,
+    height = 500 - margin.top - margin.bottom;
+
+    //if(flag==0)
+      //flag=1;
+
+  x = d3.scale.linear()
+    .range([0, width]);
+
+  y = d3.scale.linear()
+    .range([height, 0]);
+
+var color = d3.scale.category10();
+
+var xAxis = d3.svg.axis()
+    .scale(x)
+    .orient("bottom");
+
+var yAxis = d3.svg.axis()
+    .scale(y)
+    .orient("left");
+
+var svg = d3.select("#viz").append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+
+dragit.time = {min: 0, max: 9, step: 1, current: 2, offset:140 };
+dragit.object.offsetX = margin.left;
+
+/*data = [
+  {"name": "ArrayList",
+  "years": [
+    {"year": 138, "value": 65},
+    {"year": 139, "value": 70},
+    {"year": 140, "value": 79},
+    {"year": 141, "value": 109},
+    {"year": 142, "value": 136},
+    {"year": 143, "value": 147},
+    {"year": 144, "value": 148},
+    {"year": 145, "value": 70},
+    {"year": 146, "value": 181},
+    {"year": 147, "value": 33}
+     ]},
+  {"name": "Generics",
+  "years": [
+    {"year": 138, "value": 57},
+    {"year": 139, "value": 60},
+    {"year": 140, "value": 77},
+    {"year": 141, "value": 75},
+    {"year": 142, "value": 119},
+    {"year": 143, "value": 113},
+    {"year": 144, "value": 110},
+    {"year": 145, "value": 74},
+    {"year": 146, "value": 109},
+    {"year": 147, "value": 26}
+     ]
+  }]  */
+
+ 
+
+x.domain(d3.extent(data[1].years, function(d) { return d.year; })).nice();
+y.domain([0, d3.max(data, function(d) { return d3.max(d.years, function(e) { return e.value; }) })]).nice();
+
+svg.append("g")
+    .attr("class", "x axis")
+    .attr("transform", "translate(0," + height + ")")
+    .call(xAxis)
+  .append("text")
+    .attr("class", "label")
+    .attr("x", width)
+    .attr("y", -6)
+    .style("text-anchor", "end")
+    .text("Time");
+
+svg.append("g")
+    .attr("class", "y axis")
+    .call(yAxis)
+  .append("text")
+    .attr("class", "label")
+    .attr("transform", "rotate(-90)")
+    .attr("y", 6)
+    .attr("dy", ".71em")
+    .style("text-anchor", "end")
+    .text("No of Questions answered")
+
+ gPoints = svg.selectAll(".points")
+                .data(data)
+              .enter()
+                .append("g")
+                .attr("class", "points")
+                .attr("transform", function(d) {
+                  return "translate("+x(d.years[dragit.time.current].year)+", "+y(d.years[dragit.time.current].value)+")";
+                })
+                .on("mouseenter", dragit.trajectory.display)
+                .on("mouseleave", dragit.trajectory.remove)
+                .call(dragit.object.activate)
+
+gPoints.append("circle")
+  .attr("r", 10)
+  .attr("cx", 0)
+  .attr("cy", 0)
+  .style("fill", function(d) { return color(d.name); })
+
+
+gPoints.append("text")
+    .attr("x", 50)
+    .attr("y", 0)
+    .attr("dy", ".35em")
+    .style("text-anchor", "end")
+    .text(function(d) { return d.name; });
+
+
+var legend = svg.selectAll(".legend")
+    .data(color.domain())
+  .enter().append("g")
+    .attr("class", "legend")
+    .attr("transform", function(d, i) { return "translate(-200," + i * 20 + ")"; });
+
+legend.append("rect")
+    .attr("x", width - 18)
+    .attr("width", 18)
+    .attr("height", 18)
+    .style("fill", color);
+
+legend.append("text")
+    .attr("x", width - 24)
+    .attr("y", 9)
+    .attr("dy", ".35em")
+    .style("text-anchor", "end")
+    .text(function(d) { return d; });
+
+  init(data);
+
+}
+
+function update(v, t) {
+
+  dragit.time.current = v || dragit.time.current;
+  
+  gPoints.transition().duration(100)
+                .attr("transform", function(d) {
+                  return "translate("+x(d.years[dragit.time.current].year)+", "+y(d.years[dragit.time.current].value)+")";
+                })
+}
+
+function init(data) {
+
+  dragit.init("svg");
+
+  dragit.data = data.map(function(d, i) { 
+    console.log(d);
+    return d.years.map(function(e, i) { 
+      return [x(e.year)+margin.left, y(e.value)+margin.top]; 
+    }) 
+  });
+  if(flag==0){
+  dragit.evt.register("update", update);
+  dragit.utils.slider("#slider", false);
+  flag = 1;
+    }
+  dragit.trajectory.toggleAll('selected');
+}
+
+
+draw();
+</script>
